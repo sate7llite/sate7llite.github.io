@@ -13,7 +13,7 @@ class TCurveItem
 		var frame = document.createElement('iframe');
 		
 		frame.id           = inx;
-		frame.src          = "js/bareCurve.html";
+		frame.src          = "assets/js/bareCurve.html";
 		frame.width        = "100%";
 		frame.height       = height;
 		frame.scrolling    = "no";
