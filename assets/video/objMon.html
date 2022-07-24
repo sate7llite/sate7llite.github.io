@@ -244,7 +244,7 @@ function GoFrame(diff)
 	svgBkg.load(fn);
 	frameNo.value = curFrame;
 	
-	fn = sprintf("/video/%d_%d.json",curVideo,curFrame);
+	fn = sprintf("/assets/video/%d_%d.json",curVideo,curFrame);
 	
 	fetch(fn).then(res=>{return res.json()}).then(json=>DrawArea(json));
 }

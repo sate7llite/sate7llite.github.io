@@ -186,7 +186,7 @@ function SubmitBatch(isFirst)
 	
 	submitNum -= submitBatch;
 	submitCnt ++;
-	var showResult = "video/objMon.html#videoID="+submitVideo+
+	var showResult = "assets/video/objMon.html#videoID="+submitVideo+
 		"&frameID="+submitStart+"&w="+dataStore[submitVideo].w+
 		"&h="+dataStore[submitVideo].h;
 		
@@ -275,7 +275,7 @@ function InitData(data)
 		var aC  = document.createElement('a');
 		
 		aC.target = "resultTab";
-		aC.href   = "video/objMon.html#videoID="+i+
+		aC.href   = "assets/video/objMon.html#videoID="+i+
 			"&frameID="+10+"&w="+dataStore[i].w+
 			"&h="+dataStore[i].h;
 		aC.innerHTML = "查看结果";
