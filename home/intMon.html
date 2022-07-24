@@ -1,0 +1,201 @@
+﻿<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="js/resMon.css">
+<script type="text/javascript" src="jsLib/svg.min.js">
+</script>
+<script type="text/javascript" src="jsLib/commonTools.js">
+</script>
+<script type="text/javascript" src="jsLib/sprintf.js">
+</script>
+<script type="text/javascript" src="js/bkgSVG.js">
+</script>
+<script type="text/javascript" src="js/resCurve.js">
+</script>
+</head>
+<body onLoad="intCurves.OnSubClick(0);" onUnload="top.subUpdater=null;">
+<div id="curveList" width="180" align="left" valign="top">
+</div>
+
+<div id="divRightHalf">
+
+<div id="divData">
+	<font face="宋体" size="1">
+		<table border=1 id="dataTable">
+		<tr id="trIntName">
+			<td width="10%" align=center colspan=2><font face="黑体">中断名称</font></td>
+		</tr>
+		<tr id="trIntID">
+			<td width="3%" align=center rowspan=3><font face="黑体">中断状态</font></td>
+			<td align=center><font face="黑体">中断号</font></td>
+		</tr>
+		<tr id="trIntISR">
+			<td align=center><font face="黑体">ISR</font></td>
+		</tr>
+		<tr id="trIntCPU">
+			<td align=center><font face="黑体">CPU</font></td>
+		</tr>
+		<tr id="trIntAdd">
+			<td width="3%" align=center rowspan=5><font face="黑体">中断数据</font></td>
+			<td align=center><font face="黑体">中断数量</font></td>
+		</tr>
+		<tr id="trIntLoss">
+			<td align=center><font face="黑体">丢失数量</font></td>
+		</tr>
+		<tr id="trIntHandled">
+			<td align=center><font face="黑体">响应数量</font></td>
+		</tr>
+		</table>
+		
+		<hr>
+
+		<table border=1 align=center id="gTable">
+		<tr>
+			<td width="10%" align=center><font face="黑体">监测量</font></td>
+			<td width="15%" align=center><font face="黑体">中断掩码</font></td>
+			<td width="15%" align=center><font face="黑体">系统关中断嵌套数</font></td>
+			<td width="15%" align=center><font face="黑体">中断事件</font></td>
+			<td width="15%" align=center><font face="黑体">系统中断次数</font></td>
+			<td width="15%" align=center><font face="黑体">系统中断丢失</font></td>
+			<td width="15%" align=center><font face="黑体">系统中断响应</font></td>
+		</tr>
+		<tr>
+			<td align=center><font face="黑体">累计值</font></td>
+			<td align=center>-</td>
+			<td align=center>-</td>
+			<td align=center>-</td>
+			<td align=center id="tdSIntAdd"></td>
+			<td align=center id="tdSIntLoss"></td>
+			<td align=center id="tdSIntHandled"></td>
+		</tr>
+		<tr>
+			<td align=center><font face="黑体">当前值</font></td>
+			<td align=center id="tdIntMask"></td>
+			<td align=center id="tdIntGEnable"></td>
+			<td align=center id="tdIntEvents"></td>
+			<td align=center id="tdIntAdd"></td>
+			<td align=center id="tdIntLoss"></td>
+			<td align=center id="tdIntHandled"></td>
+		</tr>
+		</table>
+	</font>
+</div>
+<div id="divDetail">
+	<iframe id="sDetail" width="100%" height="28%" scrolling="no" frameBorder=0></iframe>
+</div>
+
+</div>
+<script type="text/javascript">
+/*------------------------------------------------------------------
+int curve list
+------------------------------------------------------------------*/
+var intCurves = top.InitCurveList(top.intData.activeCurve,60,curveList,sDetail);
+/*------------------------------------------------------------------
+int data table
+------------------------------------------------------------------*/
+const arrTr  = [trIntName, trIntID, trIntISR, trIntCPU, trIntAdd,   trIntLoss, trIntHandled];
+const arrVar = ["",        "id",    "stub",   "cpuID",  "intAdded", "intLoss", "intHandled"];
+//------------------------------------------------------------------
+const largeValStartRef = 4;
+var   arrCells         = null;
+//------------------------------------------------------------------
+function IntInitArrCells()
+{
+	arrCells = top.InitArrCell(top.intData.activeCurve.length,arrTr,arrCells);
+	
+	for(var i=0;i<top.intData.activeCurve.length;i++)
+	{
+		arrCells[i][0].innerHTML = top.intData.activeCurve[i][top.clMainTitle];
+	}
+}
+//------------------------------------------------------------------
+IntInitArrCells();
+//------------------------------------------------------------------
+function FillOneInt(data,cells)
+{
+	for(var i=1;i<largeValStartRef;i++)
+	{
+		var val = data[arrVar[i]];
+		cells[i].innerHTML = val;
+	}
+
+	for(var i=largeValStartRef;i<cells.length;i++)
+	{
+		var val = data[arrVar[i]];
+		cells[i].innerHTML = FormatSize(val)/*+"/"+val*/;
+	}
+}
+//------------------------------------------------------------------
+function UpdateDataTable(intData,prevData)
+{
+	for(var i=0;i<intData.stubs.length;i++)
+	{
+		var data = intData.stubs[i];
+		
+		FillOneInt(data,arrCells[i]);
+	}
+	
+	tdSIntAdd.innerHTML = FormatSize(intData.intAdded);
+	tdSIntLoss.innerHTML = FormatSize(intData.intLoss);
+	tdSIntHandled.innerHTML = FormatSize(intData.intHandled);
+	tdIntMask.innerHTML = intData.masks;
+	tdIntGEnable.innerHTML = intData.gEnable;
+	tdIntEvents.innerHTML = sprintf("%08x",intData.intEvents);
+	
+	if(prevData!=null)
+	{
+		tdIntAdd.innerHTML = FormatSize(intData.intAdded-prevData.intAdded);
+		tdIntLoss.innerHTML = FormatSize(intData.intLoss-prevData.intLoss);
+		tdIntHandled.innerHTML = FormatSize(intData.intHandled-prevData.intHandled);
+	}
+}
+/*------------------------------------------------------------------
+Sub interface
+------------------------------------------------------------------*/
+function GetSubInitData(inx)
+{
+	return top.intData.activeCurve[inx];
+}
+//------------------------------------------------------------------
+function GetSubTitle(initData,inx)
+{
+	return initData[top.clMainTitle];
+}
+//------------------------------------------------------------------
+function InitSubValueTitle(valueM0,valueM1,valueM2)
+{
+	valueM0.innerHTML="中断次数";
+	valueM1.innerHTML="丢失次数";
+	valueM2.innerHTML="响应次数";
+}
+/*------------------------------------------------------------------
+updater
+------------------------------------------------------------------*/
+var subUpdater = null;
+//------------------------------------------------------------------
+function UpdateData()
+{
+	if(intCurves.Frames.length<top.intData.activeCurve.length)
+	{
+		intCurves.UpdateList(top.intData.activeCurve);
+		IntInitArrCells();
+	}
+		
+	intCurves.Update();
+	
+	UpdateDataTable(top.intData.curData,top.intData.prevData);
+	
+	if(subUpdater)
+		subUpdater();
+}
+//------------------------------------------------------------------
+top.ColorTableRows(dataTable,top.defColorPlan);
+top.ColorTableRows(gTable,top.defColorPlan);
+UpdateData();
+parent.subUpdater = UpdateData;
+//------------------------------------------------------------------
+</script>
+
+</body>
+</html>

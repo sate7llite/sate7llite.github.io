@@ -1,0 +1,73 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<script type="text/javascript" src="../jsLib/svg.min.js">
+</script>
+<script type="text/javascript" src="bkgSVG.js">
+</script>
+<script type="text/javascript" src="resCurve.js">
+</script>
+<script type="text/javascript" src="curveConst.js">
+</script>
+</head>
+<body marginwidth=0 marginheight=0>
+<table id="contentTb" width="100%" height="100%" frame="void" border="0" cellpadding="0" cellspacing="0" margin=0>
+  <tr height="100%">
+    <td id="cellCurve" width="65%" align="left" valign="top">
+		<svg id="curveSVG" width="100%" height="38%"></svg>
+	</td>
+    <td id="cellMsg" width="35%" align="left" valign="top">
+		<font size=2 id="titleFont"><div id="curveTitle"></div></font>
+		<font size=1 id="msgFont">
+			<font id="fontMsg1"><div id="curveMsg1"></div></font>
+			<font id="fontMsg2"><div id="curveMsg2"></div></font>
+			<font id="fontMsg3"><div id="curveMsg3"></div></font>
+		</font>
+	</td>
+  </tr>
+</table>
+<script type="text/javascript">
+//------------------------------------------------------------------
+var   drawerSVG = new TResCurve(curveSVG);
+const myID      = parseInt(frameElement.id);
+const initData  = frameElement.initData;
+const msgUpdate = initData.cfg[clUpdMsg];
+var   curveData = initData.cfg[clDataSource];
+//------------------------------------------------------------------
+var   fontArr   = [fontMsg1,fontMsg2,fontMsg3];
+//------------------------------------------------------------------
+function Update()
+{
+	drawerSVG.Update(curveData);
+
+	if(msgUpdate)
+		msgUpdate(curveData,curveMsg2,curveMsg3,curveMsg1,myID);
+	else
+		console.log("No msg updater.");
+}
+//------------------------------------------------------------------
+function InitFrame()
+{
+	curveTitle.innerHTML = initData.cfg[clMainTitle];
+	curveMsg1.innerHTML  = initData.cfg[clSubTitle];
+	curveMsg2.innerHTML  = initData.cfg[clDefValue1];
+	curveMsg3.innerHTML  = initData.cfg[clDefValue2];
+	//titleFont.size       = 3+initData.cfg[clFontAdd];
+	//msgFont.size         = 2+initData.cfg[clFontAdd];
+
+	for(var i=0;i<curveData.length;i++)
+	{
+		drawerSVG.AddCurve(GetCurveColor(initData.cfg,i),CalcFillOpacity(i));
+		fontArr[i].color = GetCurveColor(initData.cfg,i);
+	}
+
+	initData.parent.OnInitOne(myID);
+	initData.subUpd = Update;
+	Update();
+}
+//------------------------------------------------------------------
+InitFrame();
+//------------------------------------------------------------------
+</script>
+</body>
+</html>

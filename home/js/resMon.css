@@ -1,0 +1,70 @@
+﻿html,body
+{
+	height:100%;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	overflow: auto;
+}
+#curveList
+{
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 180;
+	height: 98%;
+	overflow-y:auto;
+	margin: 0;
+	padding: 0;
+}
+#divRightHalf
+{
+	position: absolute;
+	left: 180;
+	right: 0;
+	top: 0;
+	height: 100%;
+	overflow:hidden;
+	margin: 0;
+	padding: 0;
+}
+#divData
+{
+	width: 100%;
+	max-height: 70%;
+	overflow:auto;
+	margin: 0;
+	padding: 0;
+}
+#divDetail
+{
+	width: 100%;
+	max-height: 50%;
+	right: 0;
+	bottom: 5;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+#divDualLeft
+{
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 50%;
+	height: 100%;
+	overflow:auto;
+	margin: 0;
+	padding: 0;
+}
+#divDualRight
+{
+	position: absolute;
+	left: 50%;
+	top: 0;
+	width: 50%;
+	height: 100%;
+	overflow:auto;
+	margin: 2;
+	padding: 2;
+}

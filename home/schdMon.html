@@ -1,0 +1,198 @@
+﻿<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="js/resMon.css">
+<script type="text/javascript" src="jsLib/svg.min.js">
+</script>
+<script type="text/javascript" src="jsLib/commonTools.js">
+</script>
+<script type="text/javascript" src="jsLib/sprintf.js">
+</script>
+<script type="text/javascript" src="jsLib/arrSort.js">
+</script>
+<script type="text/javascript" src="js/bkgSVG.js">
+</script>
+<script type="text/javascript" src="js/resCurve.js">
+</script>
+</head>
+<body onLoad="schdCurves.OnSubClick(0);" onUnload="top.schdUpdater=null;">
+<div id="curveList" width="180" align="left" valign="top">
+</div>
+
+<div id="divRightHalf">
+
+<div id="divData">
+	<font face="宋体" size="1">
+		<table border=1 id="dataTable">
+		<tr id="taskTitle">
+			<td align=center><font face="黑体">任务编号</font></td>
+			<td align=center><font face="黑体">序列号</font></td>
+			<td align=center><font face="黑体">提交时戳</font></td>
+			<td align=center><font face="黑体">启动时戳</font></td>
+			<td align=center><font face="黑体">退出时戳</font></td>
+			<td align=center><font face="黑体">退出代码</font></td>
+			<td align=center><font face="黑体">执行线程</font></td>
+			<td align=center><font face="黑体">等待数据</font></td>
+			<td align=center><font face="黑体">状态</font></td>
+			<td align=center><font face="黑体">任务</font></td>
+			<td align=center><font face="黑体">命令行</font></td>
+		</tr>
+		<tbody id="tasksBody">
+		</tbody>
+		</table>
+	</font>
+</div>
+<div id="divDetail">
+	<iframe id="sDetail" width="100%" height="28%" scrolling="no" frameBorder=0></iframe>
+</div>
+
+</div>
+<script type="text/javascript">
+/*------------------------------------------------------------------
+int curve list
+------------------------------------------------------------------*/
+var schdCurves = top.InitCurveList(top.schdData.activeCurve,60,curveList,sDetail);
+//------------------------------------------------------------------
+const taskProps=["taskID","taskSerial","initTS","startTS","stopTS","exitCode","execThread","dataIn","taskFlags", "cmdInx","params"];
+//------------------------------------------------------------------
+function FindSchdName(inx,schdName)
+{
+	for(var n of schdName)
+	{
+		if(n.id==inx)
+			return n.name;
+	}
+	
+	return "#Unknown#";
+}
+//------------------------------------------------------------------
+function CmpTaskItem(t1, t2)
+{
+	return t1.initTS-t2.initTS;
+}
+//------------------------------------------------------------------
+const taskStatus = ["未知","阻塞","就绪","运行","退出"];
+const taskColor  = ["#F0FFFF","#F0F0FF","#FFF0FF","#FFFFF0","#E0FFE0", "#FFE0E0"];
+const taskExit    = 4;
+const taskExitErr = 5;
+//------------------------------------------------------------------
+function FillTaskTable(taskInfo)
+{
+	tasksBody.innerHTML = "";
+	
+	var schdTask = taskInfo.schdTask;
+	var schdName = taskInfo.schdName;
+	
+	if(schdTask.length>1)
+		quickSortRecursive(schdTask,CmpTaskItem);
+		
+	var colorPlan = top.defColorPlan;
+		
+	taskTitle.style = "background-color:"+colorPlan.titleColor+";";
+	
+	for(var task of schdTask)
+	{
+		var trLine = document.createElement('tr');
+		tasksBody.appendChild(trLine);
+		
+		var color = task.taskFlags;
+		
+		if( (task.exitCode!=0) && (task.stopTS!=0) )
+		{
+			color = taskExitErr;
+		}
+		
+		trLine.style = "background-color:"+ArrIndex(taskColor,color)+";";
+
+		for(var prop of taskProps)
+		{
+			var td = document.createElement('td');
+			trLine.appendChild(td);
+			
+			if(prop=="cmdInx")
+			{
+				td.innerHTML = FindSchdName(task.cmdInx,schdName);
+			}
+			else if(prop=="dataIn")
+			{
+				var allD = "";
+				
+				for(var d of task.dataIn)
+				{
+					allD += FindSchdName(d,schdName)+"("+d+"),";
+				}
+				
+				td.innerHTML = allD;
+			}
+			else if(prop=="taskFlags")
+			{
+				td.innerHTML = ArrIndex(taskStatus,task.taskFlags);
+			}
+			else
+			{
+				td.innerHTML = task[prop];
+			}
+		}
+	}
+	
+	if(schdTask.length<1)
+	{
+		var trLine = document.createElement('tr');
+		tasksBody.appendChild(trLine);
+
+		for(var prop of taskProps)
+		{
+			var td = document.createElement('td');
+			trLine.appendChild(td);
+			
+			td.innerHTML = "-";
+		}
+		
+		trLine.style = "background-color:"+ArrIndex(taskColor,0)+";";
+	}
+}
+/*------------------------------------------------------------------
+Sub interface
+------------------------------------------------------------------*/
+function GetSubInitData(inx)
+{
+	return top.schdData.activeCurve[inx];
+}
+//------------------------------------------------------------------
+function GetSubTitle(initData,inx)
+{
+	return initData[top.clMainTitle];
+}
+//------------------------------------------------------------------
+function InitSubValueTitle(valueM0,valueM1,valueM2)
+{
+	valueM0.innerHTML="个";
+	valueM1.innerHTML="";
+	valueM2.innerHTML="";
+}
+/*------------------------------------------------------------------
+updater
+------------------------------------------------------------------*/
+var subUpdater = null;
+//------------------------------------------------------------------
+function UpdateData()
+{
+	fetch(top.jsSchdDataURL)
+		.then(res=>res.json())
+		.then(taskData=>FillTaskTable(taskData))
+		.catch(err=>function(){console.log("Failed!")});
+	
+	schdCurves.Update();
+	
+	if(subUpdater)
+		subUpdater();
+}
+//------------------------------------------------------------------
+UpdateData();
+top.schdUpdater = UpdateData;
+//------------------------------------------------------------------
+</script>
+
+</body>
+</html>

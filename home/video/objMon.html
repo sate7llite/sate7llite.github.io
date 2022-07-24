@@ -1,0 +1,273 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<script type="text/javascript" src="../jsLib/svg.min.js">
+</script>
+<script type="text/javascript" src="../jsLib/commonTools.js">
+</script>
+<script type="text/javascript" src="../jsLib/sprintf.js">
+</script>
+</head>
+<body>
+<table width="100%">
+<tr>
+<td rowspan="2" width="40%" align="center">
+<svg id="iconSVG" width="324" height="48" 
+	viewBox="0 0 324 48"
+	version="1.1"
+	xmlns="http://www.w3.org/2000/svg"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+>
+<defs id="iconDefs">
+</defs>
+<rect x="0" y="0" width="100%" height="100%" fill="black" stroke="none">
+</svg>
+</td>
+<td width="20%" align="center" id="tdCurVideo">
+</td>
+<td width="50%" align="center">
+<input type="Button" id="onPrev" value="前一帧" onClick="javascript:GoFrame(-1);" />
+<input type="Text" id="frameNo" value="0" size=4 />
+<input type="Button" id="onNext" value="后一帧" onClick="javascript:GoFrame(+1);" />
+<input type="Button" value="全景" onClick="javascript:ShowAll();" /> &nbsp;&nbsp;
+<input type="Range" id="iZoom" min="0" max="100" value="100" onClick="javascript:ZoomImg();" />
+<a id="aZoomVal">100%</a>
+</td>
+</tr>
+<tr>
+<td align="center" colspan=2>
+<a id="infoTag"></a>
+</td>
+</tr>
+</table>
+<hr/>
+<div id="drawPanel" style="width:99.5%;height:88.5%;overflow:auto;padding:0px;">
+</div>
+<script type="text/javascript">
+const moAreaBkg      = 0;   //black background, for area ID=0
+const moAreaUnknown  = 1;	//init value
+const moAreaBoundary = 2;   //areas within boundary area
+const moAreaMotion   = 3;   //bright area of motion objects
+const moAreaSun      = 4;   //bright area of small suns
+const moAreaTooSmall = 5;   //areas too small to be a motion object or sun
+const moAreaIOU      = 6;   //areas with IOU < minIOU (%) threshold
+const moAreaTooLarge = 7;   //areas too large to be a motion object or sun
+const moAreaNum      = 8;
+//------------------------------------------------------------------
+var   svgMap;//   = SVG(domSVG);
+var   svgBkg;//   = SVG(domBkg);
+var   svgArea;//  = SVG(domArea);
+//------------------------------------------------------------------
+var   areaGrp  = null;
+var   areaUse  = null;
+//------------------------------------------------------------------
+const areaColor = 
+[
+	"gray",
+	"#ff8080",
+	"yellow",
+	"red",
+	"#80ff80",
+	"blue",
+	"cyan",
+	"white"
+];
+//------------------------------------------------------------------
+const areaName=
+[
+	"背景",
+	"未知",
+	"边缘",
+	"运动",
+	"恒星",
+	"太小",
+	"覆盖",
+	"太大"
+];
+//------------------------------------------------------------------
+var areaCounts = new Array(moAreaNum);
+//------------------------------------------------------------------
+function InitIcons()
+{
+	const svgO = SVG(iconSVG);
+	for(var i=0;i<moAreaNum;i++)
+	{
+		var aR = svgO.rect(38,20);
+		aR.attr({x:i*40+2, y:2, style:'fill: none; stroke-width: 3; stroke: '+areaColor[i]});
+
+		var aT = svgO.text(areaName[i]);
+		aT.attr({x:i*40+4, y:-3, style:"text-anchor: start; stroke: none; font-size: 15px; fill: "+areaColor[i]});
+
+		var aC = svgO.text("1");
+		aC.attr({x:i*40+4, y:20, style:"text-anchor: start; stroke: none; font-size: 15px; fill: "+areaColor[i]});
+		areaCounts[i] = aC;
+	}
+}
+//------------------------------------------------------------------
+InitIcons();
+//------------------------------------------------------------------
+var areaData;
+//------------------------------------------------------------------
+function ClickArea(inx)
+{
+	var aI = areaData.areas[inx];
+	var info = sprintf("%d:%s (%d,%d)-(%d,%d) a=%d",inx,areaName[aI.type],aI.x,aI.y,aI.xMax,aI.yMax,aI.area);
+	
+	info += sprintf(" w=%d h=%d s=%d",aI.xMax-aI.x,aI.yMax-aI.y,(aI.xMax-aI.x)*(aI.yMax-aI.y));
+	infoTag.innerHTML = info;
+	console.log(info);
+}
+//------------------------------------------------------------------
+function DrawArea(json)
+{
+	areaData = json;
+	
+	if(areaUse!=null)
+		areaUse.remove();
+		
+	if(areaGrp!=null)
+		areaGrp.remove();
+
+	areaGrp = svgArea.group();
+	
+	var cnt = [0,0,0,0,0,0,0,0];
+
+	for(var i=0;i<json.areas.length;i++)
+	{
+		var aI = json.areas[i];
+		var aR = areaGrp.rect(aI.xMax-aI.x,aI.yMax-aI.y);
+		
+		aR.attr({x:aI.x, y:aI.y, style:'fill: none; stroke-width: 2; stroke: '+areaColor[aI.type]});
+		var fnStr="({func:function(){ClickArea("+i+");}})";
+		aR.click(eval(fnStr).func);
+		
+		cnt[aI.type] ++;
+	}
+	
+	for(var i=0;i<areaCounts.length;i++)
+	{
+		areaCounts[i].text(sprintf("%d",cnt[i]));
+	}
+}
+//------------------------------------------------------------------
+var curVideo   = 0;
+var startFrame = 0;
+var fWidth     = 4096;
+var fHeight    = 3072;
+//------------------------------------------------------------------
+function ParseHash()
+{
+	var hash = window.location.hash.substring(1);
+	var params = hash.split('&');
+	
+	for(var i=0;i<params.length;i++)
+	{
+		var pi = params[i];
+		var pa = pi.split('=');
+		
+		if(pa[0]=="videoID")
+		{
+			curVideo = pa[1];
+		}
+		else if(pa[0]=="frameID")
+		{
+			startFrame = frameNo.value = pa[1];
+		}
+		else if(pa[0]=="w")
+		{
+			fWidth = pa[1];
+		}
+		else if(pa[0]=='h')
+		{
+			fHeight = pa[1];
+		}
+	}
+	
+	tdCurVideo.innerHTML = "当前视频："+curVideo+"（"+fWidth+"x"+fHeight+"）";
+/*
+<svg id="domSVG" width="12000" height="5000" 
+	viewBox="0 0 12000 5000"
+	version="1.1"
+	xmlns="http://www.w3.org/2000/svg"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+>
+<image id="domBkg" x="0" y="0" width="12000" height="5000"/>
+<g id="domArea">
+</g>
+</svg>
+*/
+
+	var svgTxt = "<svg width=\""+fWidth+"\" height=\""+fHeight+"\" viewBox=\"0 0 "+fWidth+" "+fHeight+"\" "+
+		"version=\"1.1\" "+
+		"xmlns=\"http://www.w3.org/2000/svg\" "+
+		"xmlns:xlink=\"http://www.w3.org/1999/xlink\" > </svg>";
+		
+	var imgTxt = "<image x=\"0\" y=\"0\" width=\""+fWidth+"\" height=\""+fHeight+"\"/>";
+		
+	svgMap = SVG(svgTxt);
+	svgMap.addTo(drawPanel);
+	
+	svgBkg  = SVG(imgTxt);
+	svgBkg.addTo(svgMap);
+	
+	svgArea = svgMap.group();
+	
+	var minW = parseInt(drawPanel.offsetWidth*100/fWidth);
+	var minH = parseInt(drawPanel.offsetHeight*100/fHeight);
+	
+	if(minH<minW)
+		minW = minH;
+		
+	minW -= minW%10;
+		
+	iZoom.min = minW;
+
+/*
+	svgMap.viewbox(0,0,fWidth,fHeight);
+	svgMap.width(fWidth);
+	svgMap.height(fHeight);
+	
+	domBkg.width = fWidth;
+	domBkg.height = fHeight;
+*/
+}
+//------------------------------------------------------------------
+function GoFrame(diff)
+{
+	var curFrame = parseInt(frameNo.value,10)+diff;
+	
+	if(curFrame<0)
+		return;
+		
+	fn = sprintf("/jpeg/%d/%d.jpg",curVideo,curFrame);
+	
+	svgBkg.load(fn);
+	frameNo.value = curFrame;
+	
+	fn = sprintf("/video/%d_%d.json",curVideo,curFrame);
+	
+	fetch(fn).then(res=>{return res.json()}).then(json=>DrawArea(json));
+}
+//------------------------------------------------------------------
+function ShowAll()
+{
+	iZoom.value = iZoom.min;
+	ZoomImg();
+}
+//------------------------------------------------------------------
+function ZoomImg()
+{
+	aZoomVal.innerHTML = iZoom.value+"%";
+	
+	var ratio = parseInt(iZoom.value);
+	var rw    = parseInt(fWidth*ratio/100);
+	
+	svgMap.size(rw);
+}
+//------------------------------------------------------------------
+ParseHash();
+GoFrame(0);
+//------------------------------------------------------------------
+</script>
+</body>
+</html>
