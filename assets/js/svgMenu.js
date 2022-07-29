@@ -1,6 +1,8 @@
 //------------------------------------------------------------------
 // [20220729, Whichway] 
 // It seems there are 3 classes
+// At the begining, there are no even one line comments there,
+// 		a little akaward even though it may code in human-made
 //------------------------------------------------------------------
 // [20220729, Whichway]
 // set color and some menu block size, weight and height, etc.
@@ -13,11 +15,11 @@ class TSVGMenuData
 		this.lineColor = "blue";
 		this.forColor  = "yellow";
 		this.txtColor  = "#163f80";
-		this.fontSize  = 18;
-		this.overSize  = 20;
-		this.yShift    = 3;
-		this.btnWidth  = 100;
-		this.btnHeight = 30;
+		this.fontSize  = 38;
+		this.overSize  = 40;
+		this.yShift    = 9;
+		this.btnWidth  = 200;
+		this.btnHeight = 90;
 		this.onClick   = null;
 		this.menuSVG   = null;
 		this.btnFace   = null;
@@ -55,10 +57,8 @@ class TSVGButton
 	
 	ActiveInx(btnInx)
 	{
-		if(btnInx==this.inx)
-			this.rect.fill(this.cfg.forColor);
-		else
-			this.rect.fill(this.cfg.bkgColor);
+		if(btnInx==this.inx) this.rect.fill(this.cfg.forColor);
+		else this.rect.fill(this.cfg.bkgColor);
 	}
 	
 	OnMouseOver() { this.text.animate().attr({"y":-this.cfg.yShift,"font-size":this.cfg.overSize}); }
