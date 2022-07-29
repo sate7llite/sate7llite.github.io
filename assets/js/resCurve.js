@@ -1,4 +1,7 @@
 //------------------------------------------------------------------
+// [20220729, Whichway] 
+//
+//------------------------------------------------------------------
 function TCurveData(_maxPoint,_maxVal,_minVal)
 {
 	this.maxPoint = _maxPoint-1;
@@ -6,10 +9,7 @@ function TCurveData(_maxPoint,_maxVal,_minVal)
 	this.minVal   = _minVal;
 	this.Data     = new Array(_maxPoint);
 	
-	for(var i=0;i<_maxPoint;i++)
-	{
-		this.Data[i] = _minVal;
-	}
+	for(var i=0;i<_maxPoint;i++) { this.Data[i] = _minVal; }
 	
 	this.GetLast = function()
 	{
@@ -80,6 +80,9 @@ function TCurveData(_maxPoint,_maxVal,_minVal)
 	}
 }
 //------------------------------------------------------------------
+// [20220729, Whichway] 
+//
+//------------------------------------------------------------------
 function TCurveDraw(svg,_cw,_ch,_color,_fillOp)
 {
 	this.draw   = svg;//svg.svg("<svg x='0.5%' y='0.5%' width='99%' height='99%'></svg>");
@@ -146,6 +149,9 @@ function TCurveDraw(svg,_cw,_ch,_color,_fillOp)
 		this.curve.plot(points);
 	}
 }
+//------------------------------------------------------------------
+// [20220729, Whichway] 
+//
 //------------------------------------------------------------------
 function TResCurve(_svgObj)
 {

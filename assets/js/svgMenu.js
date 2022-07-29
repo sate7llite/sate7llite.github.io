@@ -65,6 +65,9 @@ class TSVGButton
 	OnMouseOut() { this.text.animate().attr({"y":0,"font-size":this.cfg.fontSize}); }
 }
 //------------------------------------------------------------------
+// [20220729, Whichway] 
+//------------------------------------------------------------------
+
 class TSVGMenu
 {
 	constructor(data, domElem, arrBtnFace, arrBtnRef)
