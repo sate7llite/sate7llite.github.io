@@ -32,6 +32,6 @@ function GetCurveColor(initData,inx)
 	if(inx==1)
 		return initData[clMinorColor];
 		
-	return "purple";
+	return "orange";
 }
 //------------------------------------------------------------------
