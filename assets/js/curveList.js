@@ -10,7 +10,7 @@ class TCurveItem
 		this.parent = parent;
 		this.subUpd = null;
 
-		var frame = document.createElement('iframe');
+		var frame = document.createElement( 'iframe' );
 		
 		frame.id           = inx;
 		frame.src          = "../html/bareCurve.html";
@@ -23,17 +23,14 @@ class TCurveItem
 		frame.initData     = this;
 		
 		parentDOM.appendChild(frame);
-
 		this.Frame = frame;
 	}
 	
 	Update()
 	{
 		//console.log("Update="+this.Frame.contentWindow.Update);
-		if(this.subUpd)
-			this.subUpd();
-		else
-			console.log("Missing sub updater for "+this.inx);
+		if(this.subUpd) { this.subUpd();}
+		else console.log("Missing sub updater for "+this.inx);
 		//this.Frame.contentWindow.Update();
 	}
 }

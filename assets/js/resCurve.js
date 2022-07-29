@@ -82,11 +82,12 @@ function TCurveData(_maxPoint,_maxVal,_minVal)
 }
 //------------------------------------------------------------------
 // [20220729, Whichway] 
-//
+// It seems fraw curve
 //------------------------------------------------------------------
 function TCurveDraw(svg,_cw,_ch,_color,_fillOp)
 {
-	this.draw   = svg;//svg.svg("<svg x='0.5%' y='0.5%' width='99%' height='99%'></svg>");
+	// this.draw   = svg;//svg.svg("<svg x='0.5%' y='0.5%' width='99%' height='99%'></svg>");
+	this.draw   = svg.svg("<svg x='0.5%' y='0.5%' width='99%' height='99%'></svg>");
 	this.cw     = _cw;
 	this.ch     = _ch;
 	this.fillOp = _fillOp;
