@@ -15,7 +15,7 @@
 			<script type="text/javascript" src="assets/js/taskManMain.js"></script>
 			<script type="text/javascript" src="assets/js/intManMain.js"></script>
 			<script type="text/javascript" src="assets/js/timerManMain.js"></script>
-			<script type="text/javascript" src="assets/js/dataManMain.js"></script>
+			<!-- <script type="text/javascript" src="assets/js/dataManMain.js"></script> -->
 			<script type="text/javascript" src="assets/js/schdManMain.js"></script>
 			<script type="text/javascript" src="assets/js/memManMain.js"></script>
 	</head>
@@ -51,7 +51,7 @@
 			var   updateTimer    = null;
 			var   subUpdater     = null;
 			var   schdUpdater    = null;
-			alert(1);
+			// alert(1);
 
 			//------------------------------------------------------------------
 			var   curSchdStat;
@@ -62,7 +62,7 @@
 			var   timerData = new TTimerMan(maxDataPoint,numTimer);
 			var   schdData  = new TSchdMan(maxDataPoint);
 			var   memData   = new TMemMan(maxDataPoint);
-			alert(2);
+			// alert(2);
 
 			//------------------------------------------------------------------
 			var   riResCPU  = 0;
@@ -71,7 +71,7 @@
 			var   riResTask = 3;
 			var   riResName = 4;
 			var   riResNum  = 5;
-			alert(3);
+			// alert(3);
 
 			//------------------------------------------------------------------
 			var   resRatio  = new Array(riResNum);
@@ -85,6 +85,8 @@
 			function onBtnClick(btnRef)
 			{
 				ifMain.src = "assets/html/" + btnRef + ".html";
+				alert(4);
+
 			}
 			//------------------------------------------------------------------
 			menuData.onClick = onBtnClick;
@@ -94,20 +96,14 @@
 				var tasks = infoData.tasks;
 				var cpus  = infoData.cpuInfo;
 
-				for(var i=0;i<cpus.length;i++)
-				{
-					cpus[i].curTask = "";
-				}
+				for(var i=0;i<cpus.length;i++) { cpus[i].curTask = ""; }
 				
 				for(var i=0;i<tasks.length;i++)
 				{
 					var cid = tasks[i].xTaskRunState;
-					
-					if( (cid>=0) && (cid<cpus.length) )
-					{
-						if(cpus[cid].curTask.length>0)
-							cpus[cid].curTask += "; ";
-						
+					// 
+					if( (cid>=0) && (cid<cpus.length) ) {
+						if(cpus[cid].curTask.length>0) { cpus[cid].curTask += "; "; }
 						cpus[cid].curTask += tasks[i].pcTaskName;
 					}
 				}
