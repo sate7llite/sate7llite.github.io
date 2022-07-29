@@ -42,7 +42,7 @@ function UpdateCPUMsg(curveData,curveMsg2,curveMsg3,curveMsg1)
 	curveMsg3.innerHTML = FormatSize(curveData[2].GetLast())+"开中断";
 }
 //------------------------------------------------------------------
-const cpuTmpl = ["assets/html/largeCurve.html","核0","0%","0中断","0开中断",'#ff0000','#008000',UpdateCPUMsg,[],-1,-1,null];
+const cpuTmpl = ["../html/largeCurve.html","核0","0%","0中断","0开中断",'#ff0000','#008000',UpdateCPUMsg,[],-1,-1,null];
 //------------------------------------------------------------------
 class TCpuMan extends TCurveDataMan
 {
