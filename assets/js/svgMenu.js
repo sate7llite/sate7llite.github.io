@@ -3,10 +3,10 @@ class TSVGMenuData
 {
 	constructor()
 	{
-		this.bkgColor  = "#e0ffe0";
+		this.bkgColor  = "#10fef0";
 		this.lineColor = "black";
 		this.forColor  = "white";
-		this.txtColor  = "#800080";
+		this.txtColor  = "#163f80";
 		this.fontSize  = 18;
 		this.overSize  = 20;
 		this.yShift    = 3;
