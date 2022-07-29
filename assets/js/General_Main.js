@@ -254,7 +254,7 @@ function UpdateMemMsg(curveData,curveMsg2,curveMsg3,curveMsg1)
 		curveMsg1.innerHTML = FormatSize(val);
 }
 //------------------------------------------------------------------
-var memTmpl  = ["assets/html/largeCurve.html","0","0","0","0",'#ff0000','#008000',UpdateMemMsg,[],-1,-1,null];
+var memTmpl  = ["../html/largeCurve.html","0","0","0","0",'#ff0000','#008000',UpdateMemMsg,[],-1,-1,null];
 //------------------------------------------------------------------
 var memMeta = 
 [
