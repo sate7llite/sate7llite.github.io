@@ -160,12 +160,6 @@ function OnUpdate(infoData)
 	UpdateCpuRatio(infoData);
 	resRatio[riResHeap] = (infoData.memInfo.xTotalMemInHeap-infoData.memInfo.xAvailableHeapSpaceInBytes)/infoData.memInfo.xTotalMemInHeap;
 	
-	//UpdateMsg(infoData);
-	
-	//update data
-	//rawInfo.AddData(infoData);
-	//rawLocker.AddData(lockerData);
-	
 	cpuData.UpdateCPUs(infoData.cpuInfo,infoData.lockers,infoData.hptInfo.current);
 	taskData.UpdateTasks(infoData.tasks);
 	intData.UpdateInt(infoData.intInfo);
