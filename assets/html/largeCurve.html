@@ -20,7 +20,7 @@
 	<td width="30%" align=right id="cpuMax"></td>
 </tr>
 </table>
-<svg id="cpuMap" width="100%" height="75%"
+<svg id="cpuMap" width="100%" height="100%"
 	version="1.1"
 	xmlns="http://www.w3.org/2000/svg"
 	xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -28,8 +28,8 @@
 </svg>
 <table width="100%" frame=void border=0>
 <tr>
-	<td width="50%" align=left id="cpuStart">100秒</td>
-	<td width="50%" align=right id="cpuEnd">0</td>
+	<td width="50%" align=left id="cpuStart">99秒</td>
+	<td width="50%" align=right id="cpuEnd">-1</td>
 </tr>
 </table>
 <script type="text/javascript">
@@ -45,7 +45,7 @@ valueM1.color = GetCurveColor(initData,1);
 valueM2.color = GetCurveColor(initData,2);
 cpuTitle.innerHTML = parent.GetSubTitle(initData,myID);
 cpuStart.innerHTML = Math.round(top.updateInterval*top.maxDataPoint/1000)+"秒";
-//console.log(top);
+console.log(top);
 //------------------------------------------------------------------
 parent.InitSubValueTitle(valueM0,valueM1,valueM2);
 //------------------------------------------------------------------
