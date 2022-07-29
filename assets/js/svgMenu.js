@@ -89,17 +89,13 @@ class TSVGMenu
 		this.numBtn  = l1;
 		this.buttons = new Array();
 		
-		for(var i=0;i<l1;i++)
-		{
-			this.buttons.push(new TSVGButton(this,i));
-		}
+		// new button
+		for( var i = 0; i < l1; i++ ) { this.buttons.push(new TSVGButton(this,i)); }
 
 		var lines = data.menuSVG.group();
-		
 		lines.attr({x:0,y:0,"stroke-width":0.5, fill:"none",stroke:this.data.lineColor});
 		
-		var polyData = "0,"+data.btnHeight+" 0,0 "+(data.btnWidth*l1)+",0 ";//+(data.btnWidth*l1)+","+data.btnHeight;
-			
+		var polyData = "0,"+data.btnHeight+" 0,0 "+(data.btnWidth*l1)+",0 ";//+(data.btnWidth*l1)+","+data.btnHeight;	
 		lines.polyline(polyData);
 		
 		for(var i=0;i<l1;i++)
@@ -110,15 +106,12 @@ class TSVGMenu
 		}
 	}
 	
+	// Click button index function
 	DoClick(btnInx)
 	{
-		for(var i=0;i<this.numBtn;i++)
-		{
-			this.buttons[i].ActiveInx(btnInx);
-		}
-		
-		if(this.data.onClick)
-			this.data.onClick(this.data.btnRef[btnInx]);
+		for(var i=0;i<this.numBtn;i++) { this.buttons[i].ActiveInx(btnInx); }
+		// return class button index itself
+		if(this.data.onClick) this.data.onClick(this.data.btnRef[btnInx]);
 	}
 }
 //------------------------------------------------------------------
