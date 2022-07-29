@@ -1,11 +1,17 @@
 //------------------------------------------------------------------
+// [20220729, Whichway] 
+// It seems there are 3 classes
+//------------------------------------------------------------------
+// [20220729, Whichway]
+// set color and some menu block size, weight and height, etc.
+
 class TSVGMenuData
 {
 	constructor()
 	{
 		this.bkgColor  = "#10fef0";
-		this.lineColor = "black";
-		this.forColor  = "white";
+		this.lineColor = "blue";
+		this.forColor  = "yellow";
 		this.txtColor  = "#163f80";
 		this.fontSize  = 18;
 		this.overSize  = 20;
@@ -18,6 +24,10 @@ class TSVGMenuData
 		this.btnRef    = null;
 	}
 }
+
+//------------------------------------------------------------------
+// [20220729, Whichway] 
+//
 //------------------------------------------------------------------
 class TSVGButton
 {
