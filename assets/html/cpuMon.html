@@ -1,0 +1,158 @@
+﻿<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="assets/css/resMon.css">
+<script type="text/javascript" src="assets/lib/svg.min.js">
+</script>
+<script type="text/javascript" src="assets/lib/commonTools.js">
+</script>
+<script type="text/javascript" src="assets/js/bkgSVG.js">
+</script>
+<script type="text/javascript" src="assets/js/resCurve.js">
+</script>
+</head>
+<body onLoad="cpuCurves.OnSubClick(0);" onUnload="top.subUpdater=null;">
+<div id="curveList">
+</div>
+
+<div id="divRightHalf">
+
+<div id="divData">
+	<font face="宋体">
+		<table id="dataTable" width="100%" border=1>
+		<tr id="trCoreID">
+			<td width="20%" align=center colspan=2><font face="黑体">核编号</font></td>
+		</tr>
+		<tr id="trRunTime">
+			<td id="r1" width="5%" align=center rowspan=5><font face="黑体">运行数据</font></td>
+			<td align=center><font face="黑体">总运行时间</font></td>
+		</tr>
+		<tr id="trIdleTime">
+			<td align=center><font face="黑体">空闲时间</font></td>
+		</tr>
+		<tr id="trIntCount">
+			<td align=center><font face="黑体">中断次数</font></td>
+		</tr>
+		<tr id="trEnIntCount">
+			<td align=center><font face="黑体">开中断次数</font></td>
+		</tr>
+		<tr id="trCurTask">
+			<td align=center><font face="黑体">运行任务</font></td>
+		</tr>
+		<tr id="trLockCnt">
+			<td id="r2" align=center rowspan=4><font face="黑体">锁定信息</font></td>
+			<td align=center><font face="黑体">嵌套层数</font></td>
+		</tr>
+		<tr id="trTCB">
+			<td align=center><font face="黑体">TCB</font></td>
+		</tr>
+		<tr id="trTCBInx">
+			<td align=center><font face="黑体">TCB序号</font></td>
+		</tr>
+		<tr id="trTaskName">
+			<td align=center><font face="黑体">任务名称</font></td>
+		</tr>
+		</table>
+	</font>
+</div>
+<div id="divDetail">
+	<iframe id="sDetail" width="100%" height="50%" scrolling="no" frameBorder=0></iframe>
+</div>
+</div>
+<script type="text/javascript">
+/*------------------------------------------------------------------
+CPU curve list
+------------------------------------------------------------------*/
+var cpuCurves = top.InitCurveList(top.cpuData.activeCurve,60,curveList,sDetail);
+/*------------------------------------------------------------------
+CPU data table
+------------------------------------------------------------------*/
+const arrTr    = [trCoreID, trRunTime,trIdleTime,trIntCount,trEnIntCount,trCurTask, trLockCnt,  trTCB,     trTCBInx,  trTaskName];
+const arrAttr1 = [null, "cpuData","cpuData", "cpuData", "cpuData",   "cpuData", "lockData", "lockData","lockData","lockData"];
+const arrAttr2 = [null, "runTime","idleTime","intCount","enIntCount","curTask", "lockCount","tcb",     "tcbInx",  "taskName"];
+var   arrCells = null;
+//------------------------------------------------------------------
+function CpuInitArrCell()
+{
+	var numCore = top.cpuData.activeCurve.length;
+	
+	arrCells = top.InitArrCell(numCore+2,arrTr,arrCells);
+	
+	for(var i=0;i<numCore;i++)
+		arrCells[i][0].innerHTML = i;
+	
+	arrCells[numCore  ][0].innerHTML = "中断锁";
+	arrCells[numCore+1][0].innerHTML = "任务锁";
+}
+//------------------------------------------------------------------
+CpuInitArrCell();
+//------------------------------------------------------------------
+function FillOneCore(data,cells,startI)
+{
+	for(var i=startI;i<cells.length;i++)
+	{
+		var a1 = arrAttr1[i];
+		var a2 = arrAttr2[i];
+		
+		cells[i].innerHTML = data[a1][a2];
+	}
+}
+//------------------------------------------------------------------
+function UpdateDataTable(cpuData,lockData)
+{
+	for(var i=0;i<cpuData.length;i++)
+	{
+		var data = {"cpuData":cpuData[i], "lockData":lockData[i]};
+		
+		FillOneCore(data,arrCells[i],1);
+	}
+	
+	FillOneCore(data,arrCells[cpuData.length],  6);
+	FillOneCore(data,arrCells[cpuData.length+1],6);
+}
+/*------------------------------------------------------------------
+Sub interface
+------------------------------------------------------------------*/
+function GetSubInitData(inx)
+{
+	return top.cpuData.activeCurve[inx];
+}
+//------------------------------------------------------------------
+function GetSubTitle(initData,inx)
+{
+	return "核"+inx;
+}
+//------------------------------------------------------------------
+function InitSubValueTitle(valueM0,valueM1,valueM2)
+{
+	//use default
+}
+/*------------------------------------------------------------------
+updater
+------------------------------------------------------------------*/
+var subUpdater = null;
+//------------------------------------------------------------------
+function UpdateData()
+{
+	if(cpuCurves.Frames.length!=top.cpuData.activeCurve.length)
+	{
+		cpuCurves.UpdateList(top.cpuData.activeCurve);
+		CpuInitArrCell();
+	}
+
+	cpuCurves.Update();
+	UpdateDataTable(top.cpuData.curData,top.cpuData.lockData);
+	
+	if(subUpdater)
+		subUpdater();
+}
+//------------------------------------------------------------------
+top.ColorTableRows(dataTable,top.defColorPlan);
+UpdateData();
+parent.subUpdater = UpdateData;
+//------------------------------------------------------------------
+</script>
+
+</body>
+</html>

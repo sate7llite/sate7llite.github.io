@@ -33,7 +33,7 @@ function UpdateIntMsg(curveData,curveMsg2,curveMsg3,curveMsg1)
 	curveMsg3.innerHTML = FormatSize(curveData[2].GetLast());
 }
 //------------------------------------------------------------------
-const intTmpl  = ["largeCurve.html","0","0","0","0",'#ff0000','#008000',UpdateIntMsg,[],-1,-1,null];
+const intTmpl  = ["assets/html/largeCurve.html","0","0","0","0",'#ff0000','#008000',UpdateIntMsg,[],-1,-1,null];
 const intNames = 
 [
 	"调度0", "调度1", "调度2", "调度3",	"调度4", "调度5", "调度6", "调度7",

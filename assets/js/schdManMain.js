@@ -6,7 +6,7 @@ function UpdateSchdMsg(curveData,curveMsg2,curveMsg3,curveMsg1)
 	curveMsg1.innerHTML = FormatSize(curveData[0].GetLast());
 }
 //------------------------------------------------------------------
-var schdTmpl = ["largeCurve.html","0","0","0","0",'#ff0000','#008000',UpdateSchdMsg,[],-1,-1,null];
+var schdTmpl = ["assets/html/largeCurve.html","0","0","0","0",'#ff0000','#008000',UpdateSchdMsg,[],-1,-1,null];
 //------------------------------------------------------------------
 var schdMeta = 
 [

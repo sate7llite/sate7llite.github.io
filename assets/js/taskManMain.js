@@ -38,7 +38,7 @@ function UpdateTaskMsg(curveData,curveMsg2,curveMsg3,curveMsg1)
 	curveMsg3.innerHTML = FormatSize(curveData[2].GetLast())+"B";
 }
 //------------------------------------------------------------------
-const taskTmpl = ["largeCurve.html","0","0%","0B","0B",'#ff0000','#008000',UpdateTaskMsg,[],-1,-1,null];
+const taskTmpl = ["assets/html/largeCurve.html","0","0%","0B","0B",'#ff0000','#008000',UpdateTaskMsg,[],-1,-1,null];
 //------------------------------------------------------------------
 class TTaskMan extends TCurveDataMan
 {

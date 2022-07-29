@@ -1,0 +1,147 @@
+﻿<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="assets/css/resMon.css">
+<script type="text/javascript" src="assets/lib/svg.min.js">
+</script>
+<script type="text/javascript" src="assets/lib/commonTools.js">
+</script>
+<script type="text/javascript" src="assets/lib/sprintf.js">
+</script>
+<script type="text/javascript" src="assets/js/bkgSVG.js">
+</script>
+<script type="text/javascript" src="assets/js/resCurve.js">
+</script>
+</head>
+<body onLoad="timerCurves.OnSubClick(0);" onUnload="top.subUpdater=null;">
+<div id="curveList" width="180" align="left" valign="top">
+</div>
+
+<div id="divRightHalf">
+
+<div id="divData">
+	<font face="宋体" size="1">
+		<table border=1 id="dataTable">
+		<tr id="trTimerName">
+			<td width="10%" align=center><font face="黑体">定时器名称</font></td>
+		</tr>
+		<tr id="trTimerID">
+			<td align=center><font face="黑体">编号</font></td>
+		</tr>
+		<tr id="trTimerInt">
+			<td align=center><font face="黑体">中断号</font></td>
+		</tr>
+		<tr id="trTimerTrigger">
+			<td align=center><font face="黑体">完成数</font></td>
+		</tr>
+		<tr id="trTimerFlag">
+			<td align=center><font face="黑体">状态</font></td>
+		</tr>
+		</table>
+	</font>
+</div>
+<div id="divDetail">
+	<iframe id="sDetail" width="100%" height="28%" scrolling="no" frameBorder=0></iframe>
+</div>
+
+</div>
+<script type="text/javascript">
+/*------------------------------------------------------------------
+int curve list
+------------------------------------------------------------------*/
+var timerCurves = top.InitCurveList(top.timerData.activeCurve,60,curveList,sDetail);
+/*------------------------------------------------------------------
+int data table
+------------------------------------------------------------------*/
+const arrTr  = [trTimerName, trTimerID, trTimerInt, trTimerTrigger, trTimerFlag];
+const arrVar = ["",          "id",      "intID",    "nTrigger",     "flags"];
+//------------------------------------------------------------------
+var   enumValStartRef = 4;
+var   arrCells        = null;
+//------------------------------------------------------------------
+function TimerInitArrCells()
+{
+	arrCells = top.InitArrCell(top.timerData.activeCurve.length,arrTr,arrCells);
+	
+	for(var i=0;i<top.timerData.activeCurve.length;i++)
+	{
+		arrCells[i][0].innerHTML = top.timerData.activeCurve[i][top.clMainTitle];
+	}
+}
+//------------------------------------------------------------------
+TimerInitArrCells();
+//------------------------------------------------------------------
+const timerStatus={start:0, names:[
+    "空闲", "错误", "单次", "周期", "未知"]};
+//------------------------------------------------------------------
+function FillOneInt(data,cells)
+{
+	for(var i=1;i<enumValStartRef;i++)
+	{
+		var val = data[arrVar[i]];
+		cells[i].innerHTML = val;
+	}
+	
+	var val = data[arrVar[enumValStartRef]];
+	
+	cells[enumValStartRef].innerHTML = top.FmtEnumValue(timerStatus,val);
+}
+//------------------------------------------------------------------
+function UpdateDataTable(timerData)
+{
+	for(var i=0;i<timerData.length;i++)
+	{
+		var data = timerData[i];
+		
+		FillOneInt(data,arrCells[i]);
+	}
+}
+/*------------------------------------------------------------------
+Sub interface
+------------------------------------------------------------------*/
+function GetSubInitData(inx)
+{
+	return top.timerData.activeCurve[inx];
+}
+//------------------------------------------------------------------
+function GetSubTitle(initData,inx)
+{
+	return initData[top.clMainTitle];
+}
+//------------------------------------------------------------------
+function InitSubValueTitle(valueM0,valueM1,valueM2)
+{
+	valueM0.innerHTML="完成次数";
+	valueM1.innerHTML="";
+	valueM2.innerHTML="";
+}
+/*------------------------------------------------------------------
+updater
+------------------------------------------------------------------*/
+var subUpdater = null;
+//------------------------------------------------------------------
+function UpdateData()
+{
+	if(timerCurves.Frames.length<top.timerData.activeCurve.length)
+	{
+		timerCurves.UpdateList(top.timerData.activeCurve);
+		TimerInitArrCells();
+	}
+		
+	timerCurves.Update();
+	
+	UpdateDataTable(top.timerData.curData);
+	
+	if(subUpdater)
+		subUpdater();
+}
+//------------------------------------------------------------------
+top.ColorTableRows(dataTable,top.defColorPlan);
+UpdateData();
+parent.subUpdater = UpdateData;
+//------------------------------------------------------------------
+</script>
+
+</body>
+</html>

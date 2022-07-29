@@ -1,0 +1,104 @@
+﻿<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="assets/css/resMon.css">
+<script type="text/javascript" src="assets/lib/svg.min.js">
+</script>
+<script type="text/javascript" src="assets/lib/commonTools.js">
+</script>
+<script type="text/javascript" src="assets/lib/sprintf.js">
+</script>
+<script type="text/javascript" src="assets/js/gaugeIntf.js">
+</script>
+</head>
+<body onUnload="top.subUpdater=null;">
+<div id="divData" align=center>
+	<table border=0 id="resTable" cellspacing="2" width="100%">
+	<tr>
+		<td align=center>CPU</td>
+		<td align=center>核</td>
+		<td align=center>堆占用</td>
+		<td align=center>任务空间</td>
+		<td align=center>数据空间</td>
+	</tr>
+	<tr id="dataRow">
+		<td align=center class="gaugeTD"></td>
+		<td align=center class="gaugeTD"></td>
+		<td align=center class="gaugeTD"></td>
+		<td align=center class="gaugeTD"></td>
+		<td align=center class="gaugeTD"></td>
+	</tr>
+	<tr id="valueRow">
+		<td align=center class="valueTD"></td>
+		<td align=center class="valueTD"></td>
+		<td align=center class="valueTD"></td>
+		<td align=center class="valueTD"></td>
+		<td align=center class="valueTD"></td>
+	</tr>
+	</table>
+<hr>
+	<table id="stateTable" width="100%" border=1>
+	<tr>
+		<td align=center>运行时长</td>
+		<td align=center>调度器</td>
+		<td align=center>CPU数量</td>
+		<td align=center>最大任务数量</td>
+		<td align=center>当前TCB用量</td>
+		<td align=center>当前任务数量</td>
+		<td align=center>任务切换</td>
+		<td align=center>节点状态</td>
+	</tr>
+	<tr>
+		<td align=center id="aSysRT"></td>
+		<td align=center id="aScheduler"></td>
+		<td align=center id="aNumCpu"></td>
+		<td align=center id="aMaxTask"></td>
+		<td align=center id="aNumTCB"></td>
+		<td align=center id="aNumTask"></td>
+		<td align=center id="aCtxSwitch"></td>
+		<td align=center id="aSysState"></td>
+	</tr>
+	</table>
+</div>
+<script type="text/javascript">
+//------------------------------------------------------------------
+var arrResTd  = dataRow.getElementsByClassName("gaugeTD");
+var arrValTd  = valueRow.getElementsByClassName("valueTD");
+var arrResSVG = new Array(arrResTd.length);
+for(var i=0;i<arrResTd.length;i++)
+{
+	arrResSVG[i] = new TGaugeIntf(arrResTd[i],200,200);
+}
+//------------------------------------------------------------------
+function UpdateMsg(infoData)
+{
+	aSysRT.innerHTML = sprintf("%.2f", infoData.hptInfo.current/1000000)+"秒";
+	aScheduler.innerHTML = (infoData.uxSchedulerSuspended==0?"启用/":"挂起/")+infoData.uxSchedulerSuspended;
+	aNumCpu.innerHTML = infoData.cpuInfo.length;
+	aMaxTask.innerHTML = infoData.numTCBTotal;
+	aNumTCB.innerHTML = infoData.numTCBUsed;
+	aNumTask.innerHTML = infoData.numTask;
+	aCtxSwitch.innerHTML = infoData.uxSysContextSwitch;
+	aSysState.innerHTML = "<font color='green'>运行</font>";
+}
+//------------------------------------------------------------------
+function UpdateData()
+{
+	UpdateMsg(top.curInfoData);
+	
+	for(var i=0;i<arrResSVG.length;i++)
+	{
+		arrResSVG[i].SetValue(top.resRatio[i]*100);
+		arrValTd[i].innerHTML = sprintf("%.1f%%",top.resRatio[i]*100);
+	}
+}
+//------------------------------------------------------------------
+top.ColorTableRows(stateTable,top.defColorPlan);
+UpdateData();
+parent.subUpdater = UpdateData;
+//------------------------------------------------------------------
+</script>
+
+</body>
+</html>

@@ -1,0 +1,72 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<script type="text/javascript" src="assets/lib/svg.min.js">
+</script>
+<script type="text/javascript" src="assets/lib/commonTools.js">
+</script>
+<script type="text/javascript" src="assets/js/bkgSVG.js">
+</script>
+<script type="text/javascript" src="assets/js/resCurve.js">
+</script>
+<script type="text/javascript" src="assets/js/curveConst.js">
+</script>
+</head>
+<body onResize="drawerSVG.Update(curveData);">
+<table width="100%" frame=void border=0>
+<tr>
+	<td width="30%" align=left id="valueTitle"><font id="valueM0">占用率</font>|<font id="valueM1">中断次数</font>|<font id="valueM2">开中断次数</font></td>
+	<td width="40%" align=center><font size=4 id="cpuTitle"></font></td>
+	<td width="30%" align=right id="cpuMax"></td>
+</tr>
+</table>
+<svg id="cpuMap" width="100%" height="75%"
+	version="1.1"
+	xmlns="http://www.w3.org/2000/svg"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+>
+</svg>
+<table width="100%" frame=void border=0>
+<tr>
+	<td width="50%" align=left id="cpuStart">100秒</td>
+	<td width="50%" align=right id="cpuEnd">0</td>
+</tr>
+</table>
+<script type="text/javascript">
+//------------------------------------------------------------------
+const myID     = parseInt(frameElement.id);
+var   initData = parent.GetSubInitData(myID);
+//------------------------------------------------------------------
+var drawerSVG = new TResCurve(cpuMap);
+var curveData = initData[clDataSource];
+//------------------------------------------------------------------
+valueM0.color = GetCurveColor(initData,0);
+valueM1.color = GetCurveColor(initData,1);
+valueM2.color = GetCurveColor(initData,2);
+cpuTitle.innerHTML = parent.GetSubTitle(initData,myID);
+cpuStart.innerHTML = Math.round(top.updateInterval*top.maxDataPoint/1000)+"秒";
+//console.log(top);
+//------------------------------------------------------------------
+parent.InitSubValueTitle(valueM0,valueM1,valueM2);
+//------------------------------------------------------------------
+for(var i=0;i<curveData.length;i++)
+{
+	drawerSVG.AddCurve(GetCurveColor(initData,i),CalcFillOpacity(i));
+}
+//------------------------------------------------------------------
+function Update()
+{
+	drawerSVG.Update(curveData);
+	
+	if(curveData.length>=3)
+		cpuMax.innerHTML = "100%|"+FormatSize(curveData[1].maxVal)+"|"+FormatSize(curveData[2].maxVal);
+	else
+		cpuMax.innerHTML = FormatSize(curveData[0].maxVal);
+}
+//------------------------------------------------------------------
+parent.subUpdater = Update;
+Update();
+//------------------------------------------------------------------
+</script>
+</body>
+</html>

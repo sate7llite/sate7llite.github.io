@@ -13,7 +13,7 @@ class TGaugeIntf
 		
 		this.obj.This   = this;
 		this.obj.type   = "image/svg+xml"; 
-		this.obj.data   = "assets/js/gaugeDesign.svg" 
+		this.obj.data   = "assets/svg/gaugeDesign.svg" 
 		this.obj.onload = onGaugeSVGLoad;
 		this.obj.width  = width;
 		this.obj.height = height;

@@ -1,0 +1,114 @@
+﻿<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="assets/css/resMon.css">
+<script type="text/javascript" src="assets/lib/svg.min.js">
+</script>
+<script type="text/javascript" src="assets/lib/commonTools.js">
+</script>
+<script type="text/javascript" src="assets/lib/sprintf.js">
+</script>
+<script type="text/javascript" src="assets/lib/arrSort.js">
+</script>
+<script type="text/javascript" src="assets/js/bkgSVG.js">
+</script>
+<script type="text/javascript" src="assets/js/resCurve.js">
+</script>
+</head>
+<body onUnload="top.schdUpdater=null;">
+<div align=center>
+<font face="宋体" size="1">
+	<table border=1 id="dataTable">
+	<tr>
+		<td align=center><font face="黑体">编号</font></td>
+		<td align=center><font face="黑体">名称</font></td>
+		<td align=center><font face="黑体">序列号</font></td>
+		<td align=center><font face="黑体">大小</font></td>
+		<td align=center><font face="黑体">标志</font></td>
+		<td align=center><font face="黑体">数据指针</font></td>
+		<td align=center><font face="黑体">引用数</font></td>
+	</tr>
+	<tbody id="nameBody">
+	</tbody>
+	</table>
+</font>
+</div>
+<script type="text/javascript">
+//------------------------------------------------------------------
+const scfTypeData = 1;
+const scfTypeTask = 2;
+const scfReady    = 4;
+//------------------------------------------------------------------
+function GetNameStatus(flags)
+{
+	var out = "";
+	if(flags&scfTypeData)
+		out += " 数据";
+	if(flags&scfTypeTask)
+		out += " 任务";
+	if(flags&scfReady)
+		out += " 就绪";
+		
+	out += "("+flags+")";
+		
+	return out;
+}
+//------------------------------------------------------------------
+const nameProps=["id","name","serial","size","flags","data","refCnt"];
+//------------------------------------------------------------------
+function FillNameTable(taskInfo)
+{
+	nameBody.innerHTML = "";
+	
+	var schdName = taskInfo.schdName;
+	
+	for(var name of schdName)
+	{
+		var trLine = document.createElement('tr');
+		nameBody.appendChild(trLine);
+
+		for(var prop of nameProps)
+		{
+			var td = document.createElement('td');
+			trLine.appendChild(td);
+
+			if(prop=="size")
+			{
+				td.innerHTML = FormatSize(name.size)+"B";
+			}
+			else if(prop=="flags")
+			{
+				td.innerHTML = GetNameStatus(name.flags);
+			}
+			else if(prop=="data")
+			{
+				td.innerHTML = sprintf("0x%08x",name.data);
+			}
+			else
+			{
+				td.innerHTML = name[prop];
+			}
+		}
+	}
+
+	top.ColorTableRows(dataTable,top.defColorPlan);
+}
+/*------------------------------------------------------------------
+updater
+------------------------------------------------------------------*/
+function UpdateData()
+{
+	fetch(top.jsSchdDataURL)
+		.then(res=>res.json())
+		.then(taskData=>FillNameTable(taskData))
+		.catch(err=>function(){console.log("Failed!")});
+}
+//------------------------------------------------------------------
+UpdateData();
+var timer = setInterval(UpdateData,top.updateInterval);
+//------------------------------------------------------------------
+</script>
+
+</body>
+</html>
