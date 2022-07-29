@@ -149,11 +149,82 @@ class TFieldDataMan extends TCurveDataMan
 //------------------------------------------------------------------
 //------------------------------------------------------------------
 // [20220729, Whichway] 
-// 3 functions 
+// 3 functions intmanmain
 //------------------------------------------------------------------
 //------------------------------------------------------------------
 
 
+//------------------------------------------------------------------
+class TIntData extends TCurveDataItem
+{
+	constructor(maxDataPoint)
+	{
+		super(maxDataPoint);
+	}
+	
+	Update(data)
+	{
+		if(this.Cur!=null)
+		{
+			this.curveData[0].AddData(data.intAdded-this.Cur.intAdded);
+			
+			this.curveData[1].AddData(data.intLoss-this.Cur.intLoss);
+			this.curveData[2].AddData(data.intHandled-this.Cur.intHandled);
+
+			this.curveData[0].CountMax();
+			this.curveData[1].CountMax();
+			this.curveData[2].CountMax();
+		}
+		
+		this.Cur = data;
+	}
+}
+//------------------------------------------------------------------
+// This function will be executed in bareCurve.html!
+//------------------------------------------------------------------
+function UpdateIntMsg(curveData,curveMsg2,curveMsg3,curveMsg1)
+{
+	curveMsg1.innerHTML = FormatSize(curveData[1].GetLast());
+	curveMsg2.innerHTML = FormatSize(curveData[1].GetLast());
+	curveMsg3.innerHTML = FormatSize(curveData[2].GetLast());
+}
+//------------------------------------------------------------------
+const intTmpl  = ["assets/html/largeCurve.html","0","0","0","0",'#ff0000','#008000',UpdateIntMsg,[],-1,-1,null];
+const intNames = [ ];
+//------------------------------------------------------------------
+class TIntMan extends TCurveDataMan
+{
+	constructor(maxDataPoint,maxInt)
+	{
+		super(maxDataPoint,maxInt,TIntData,UpdateIntMsg,intTmpl);
+		this.prevData = null;
+		
+		for(var i=0;i<maxInt;i++)
+		{
+			this.myCurve[i][clMainTitle] = intNames[i];
+		}
+	}
+
+	UpdateInt(intInfo)
+	{
+		this.prevData = this.curData;
+		this.curData  = intInfo;
+		
+		for(var i=0;i<intInfo.stubs.length;i++)
+		{
+			var inx = intInfo.stubs[i].id;
+			
+			this.myData[inx].Update(intInfo.stubs[i]);
+			
+			if(this.myData[inx].inList<0)
+			{
+				this.activeCurve.push(this.myCurve[inx]);
+				this.myData[inx].inList = inx;
+			}
+		}
+	}
+}
+//------------------------------------------------------------------
 
 
 
