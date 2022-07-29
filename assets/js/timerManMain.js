@@ -26,7 +26,7 @@ function UpdateTimerMsg(curveData,curveMsg2,curveMsg3,curveMsg1)
 	curveMsg1.innerHTML = FormatSize(curveData[0].GetLast());
 }
 //------------------------------------------------------------------
-const timerTmpl = ["assets/html/largeCurve.html","0","0","0","0",'#ff0000','#008000',UpdateTimerMsg,[],-1,-1,null];
+const timerTmpl = ["../html/largeCurve.html","0","0","0","0",'#ff0000','#008000',UpdateTimerMsg,[],-1,-1,null];
 const timerNames = 
 [
 	"用户0", "用户1", "用户2", "用户3",	"时钟4",
