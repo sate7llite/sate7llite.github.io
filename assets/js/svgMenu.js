@@ -9,7 +9,7 @@ class TSVGMenuData
 {
 	constructor()
 	{
-		this.bkgColor  = "#10fef0";
+		this.bkgColor  = "#191919";
 		this.lineColor = "blue";
 		this.forColor  = "yellow";
 		this.txtColor  = "#163f80";
@@ -61,15 +61,8 @@ class TSVGButton
 			this.rect.fill(this.cfg.bkgColor);
 	}
 	
-	OnMouseOver()
-	{
-		this.text.animate().attr({"y":-this.cfg.yShift,"font-size":this.cfg.overSize});
-	}
-	
-	OnMouseOut()
-	{
-		this.text.animate().attr({"y":0,"font-size":this.cfg.fontSize});
-	}
+	OnMouseOver() { this.text.animate().attr({"y":-this.cfg.yShift,"font-size":this.cfg.overSize}); }
+	OnMouseOut() { this.text.animate().attr({"y":0,"font-size":this.cfg.fontSize}); }
 }
 //------------------------------------------------------------------
 class TSVGMenu
@@ -79,8 +72,7 @@ class TSVGMenu
 		var l1 = arrBtnFace.length;
 		var l2 = arrBtnRef.length;
 		
-		if(l1>l2)
-			l1 = l2;
+		if(l1>l2) {l1 = l2;}
 			
 		this.data = data;
 	
